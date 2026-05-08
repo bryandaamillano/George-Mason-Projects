@@ -1,0 +1,139 @@
+---
+title: "Case Study 1 Group 4"
+author: "Archana, Jaimarie, Nora, Bre, and Jackelin"
+date: "2023-02-08"
+output:
+  html_document: default
+  pdf_document: default
+  '': default
+---
+
+```{r setup, include=FALSE}
+#Relevant libraries needed for this project.
+library(tidyverse)
+library(ggplot2)
+library(ggthemes)
+library(openintro)
+library(dplyr)
+library(knitr)
+
+```
+
+
+```{r setup loading data, include=FALSE}
+#Loding the data set for this project.
+load("camp_teach_0.RData")
+
+```
+
+```{r cleaning data, include=FALSE}
+#Data cleaning by omitting any variables containing N/A within the camp data set and renaming the set from camp to new_camp. The variable POSFEVPP was changed to FEV within the new_camp data set.
+new_camp <- na.omit(camp)
+new_camp <- new_camp %>% 
+  rename("FEV"=POSFEVPP)
+
+```
+
+# Introduction
+Data for this study was from the Childhood Asthma Management Program, CAMP, who enrolled children ages 5-12 from 1993-1995 to analyze the impacts of different treatments on lung function. In this case study we will look at three different variables including white blood cell count (1000 cells/ul), the presence of a pet (yes or no), and the use of a woodstove for heating and/or cooking (yes or no). The primary research question is does pediatric white blood cell count after treatment have any effect on the lung function of children? The second research question was does having a pet in the home affect lung function of children? Lastly, the third research question was does using a woodstove in the home affect the lung function of children? Graphical displays and summary statistics will provide a visual representation of these relationships. 
+
+# Methods
+Before beginning data analysis we cleaned the data set to remove any rows with missing values for any variables. There were 38 total observations omitted from the data and 657 observations remained. When 5% or less of the data is missing, in our case 5.47%, the complete case analysis results will not be too far off from the results, had you had the real values for the missing data. The first step of exploratory data analysis is to explore the data set CAMP. We examined distribution of the numeric variables, lung function measured as FEV1 % (forced expiratory volume) after the administration of a bronchodilator and white blood cell count, through histograms. The strength and relationship between lung function and white blood cell count via a correlation coefficient were measured. A scatterplot with lung function and white blood cell count was created to explore their association. For the two dichotomous categorical variables, pets and woodstoves, bar plots provided the number of counts in each group. To investigate associations between pets and woodstove with lung function we created side-by-side boxplots to compare the medians and IQRs. All analyses were conducted in R 2022.07.1.  
+
+# Results
+The correlation coefficient of lung function and white blood cell count is 0.06, which is very close to 0. The scatterplot of white blood cell count by lung function did not suggest a meaningful association. Based on the histograms, lung function is normally distributed and white blood cell count is right skewed. We used the summary statistics median and IQR to describe the distribution of white blood cell count because the histogram was right skewed and these measures are more robust to outliers. The bar plot of pets shows that 465 children had pets in their homes compared to 192 children who did not have pets in their homes. The median lung function for children who had pets in their homes was around 105% which is slightly higher than children who did not have pets in their homes with a median of around 100%. The bar plot of woodstove shows that 601 children lived in homes that did not use woodstoves, compared to 56 children who lived in homes that did use woodstoves. The median lung function is slightly lower for children who live in homes using woodstoves, around 100%, compared to those who do not use woodstoves, around 105%. Based on the spread shown on the boxplot, the IQR is also greater for children who live in homes using a woodstove compared to homes that do not use a woodstove. 
+
+# Discussion and Conclusion
+In this study, we investigated the relationships of white blood cells, having pets in the home, and the use of a woodstove on children’s lung function. Our findings did not suggest an association for any of these variables which is consistent with existing studies.  
+
+Based on the National Cancer Institute, white blood cells are part of the body’s immune system that fight off infection and other diseases (National, 2023). White blood cells are checked to monitor for any conditions like infections, allergies, inflammation, and leukemia. Based on a study with respiratory medicine, they found no evidence that systematic inflammation causes a decline in lung function (Hancox Rt.al, 2015). Observing our data, the scatter plot did not suggest an association between white blood cell count and lung function due to it being nonlinear since the points do not show a linear trend. Additionally, the correlation coefficient was close to 0 indicating there was no correlation between the two variables. The normal count of white blood cells is between 4,500 to 11,000 microliters which can explain the data being around that range on the histogram, but there is no direction of the lung function on white blood cells. When identifying the relationship between white blood cells and lung function there did not appear to be an association and numerous scientific studies discussed above have stated this fact. Thus we can draw this scientific conclusion that white blood cell count does not have any effect on the lung function. 
+
+Previous studies have found conflicting evidence about the relationship between pet ownership and lung function (Collin, et al., 2015, Kelechi, et al., 2019, Lowe, et al., 2004). Some studies have found no effect between having pets and lung function while other studies have found reduced lung function in children who were exposed to pet dander. In our study, children who had pets had slightly worse lung function than children who did not have pets as the median is slightly lower (close to 99%) with pets as compared to no pets (105%). The IQR of those who had pets and those who did not have pets was similar, suggesting similar levels of lung function variability in both groups. This may be due to the wide range of older ages included in the data. A previous study found that the first two years of life had an impact on lung function related to pet exposure (Hu, L., et al., 2017). Since ages range from five to twelve this could account for the similar variability of lung function in children who have pets in their home and children who do not have pets in their home. To determine if the difference in the median lung function between children who had pets and those who did not have pets would require a statistical significance test.  
+
+Smoke from wood stoves contains several hazardous pollutants, such carbon monoxide and nitrogen oxides, which could lead to a range of respiratory diseases (Rokoff et al., 2017). Children are especially prone due to their developing lungs and relatively large intake of pollutants (Rokoff et al., 2017). In this study, children who lived in homes with a wood stove had a slightly lower median FEV(Forced Expiratory Volume), (100%), than those who lived in homes without a wood stove (105%). In 1988, US Environmental Protection Agency issued New Source Performance Standards that required wood stove manufacturers to pass emissions testing before selling their products. (United States Environmental Protection Agency, 2022). This requirement aimed to reduce the exposure to pollutants. However, a large amount of homes still had wood stoves bought before 1988 (Rokoff et al., 2017). The mixture of regulated and unregulated wood stoves could have accounted for the large IQR in children who lived in homes with wood stoves. Length of exposure to wood smoke, type of wood used as well as other precautions taken while using the wood stove, if any, could influence the variability of FEV amongst the children. Although this study showed that lung function of children living in households with wood stoves is lower than compared to those without, the difference observed in the medians was small.  
+
+Strengths of this case study include the robust data set with a variety of variables. In addition to treatment group and lung function, there were ten other variables recorded or measured. Another strength of this study is the large sample size with diverse subjects. Additionally, there was a limited amount missing data so we could draw results from our study. Limitations include the limited information about the dataset variables and details about the selection of the study population. For example, the anypet variable is not defined well. It does not state what animals qualify (those with or without fur and/or allergens) and whether they are kept inside the house. Lack of specificity in the variables could create discrepancies in the study data.  
+
+Our data did not suggest an association between lung function and white blood cell count. Although the side-by-side box plots displayed a lower median lung function for children who lived in homes with pets and children who lived in homes with woodstoves compared to children who lived in homes without pets and children who lived in homes without woodstoves, respectively, we cannot conclude there is a meaningful difference due to the lack of a statistical significance test. Clinicians may find these relationships helpful in advising parents and/or guardians as well as in their diagnosis for children. In summary, this exploratory data analysis showed that we should further explore the relationships between having pets and using a woodstove on lung function. 
+
+# References
+Collin, S. M., Granell, R., Westgarth, C., Murray, J., Paul, E. S., Sterne, J. A., & Henderson, A. J. (2015). Associations of pet ownership with wheezing and lung function in childhood: findings from a UK birth cohort. PloS one, 10(6), e0127756.  
+Hancox, Gray, A. R., Sears, M. R., & Poulton, R. (2015). Systemic inflammation and lung function: A longitudinal analysis. Respiratory Medicine, 111, 54–59. https://doi.org/10.1016/j.rmed.2015.12.007  
+
+L.-W. Hu, Z. Qian, S. C. Dharmage, E. Liu, S. W. Howard, M. G. Vaughn, J. Perret, C. C. Lodge, X.-W. Zeng, B.-Y. Yang, S.-L. Xu, C. Zhang, G.-H. Do. (2017). Pre-natal and post-natal exposure to pet ownership and lung function in children: The Seven Northeastern Cities Study. Indoor Air. 27: 1177–1189. https://doi.org/10.1111/ina.12401 
+
+Kelechi Isiugo, Roman Jandarov, Jennie Cox, Patrick Ryan, Nicholas Newman, Sergey A. Grinshpun, Reshmi Indugula, Steven Vesper, Tiina Reponen. (2019). Indoor particulate matter and lung function in children. Science of the Total Environment, 662, 408-417. https://doi.org/10.1016/j.scitotenv.2019.01.309. 
+
+Lowe, L. A., Woodcock, A., Murray, C. S., Morris, J., Simpson, A., & Custovic, A. (2004). Lung function at 2 age 3 years: effect of pet ownership and exposure to indoor allergens. Archives of pediatrics & adolescent medicine, 158(10), 996-1001.  
+National Cancer Institute (2023). WBC. Retrieved from https://www.cancer.gov/publications/dictionaries/cancer-terms/def/wbc 
+
+Rokoff, L. B., Koutrakis, P., Garshick, E., Karagas, M. R., Oken, E., Gold, D. R., & Fleisch, A. F. (2017). Wood Stove Pollution in the Developed World: A Case to Raise Awareness Among Pediatricians. Current problems in pediatric and adolescent health care, 47(6), 123–141. https://doi.org/10.1016/j.cppeds.2017.04.001  
+
+United States Environmental Protection Agency. (2022). Compliance Requirements for 1988 NSPS for Residential Wood Heaters. https://www.epa.gov/residential-wood-heaters/compliance-requirements-1988-ns ps-residential-wood-heaters#:~:text=The%201988%20New%20Source%20Performance,in%20the%20Clean%20Air%20Act. 
+
+# Tables and Figures
+```{r data exploration, include=FALSE}
+#Data exploration
+##Viewing the summary statistics of each variable in the new_camp data set, the total number of observations and variables, and viewing the first six rows present in the data frame.
+summary(new_camp)
+dim(new_camp)
+head(new_camp)
+```
+
+```{r summary data, include=FALSE, message=FALSE, echo=FALSE}
+#Summary data for wbc. Grouping by white blood cells and including mean FEV, median FEV, IQR (interquartile range) of FEV, SD (standard deviation) of FEV, and the minimum and maximum FEV.
+new_camp %>%
+  group_by(wbc) %>%
+summarize(new_camp, "Mean FEV"= mean(FEV),"Median FEV"= median(FEV), "IQR"=IQR(FEV), "SD"=sd(FEV), "Minimum"=min(FEV), "Maximum"=max(FEV)) %>% kable(digits=2)
+
+#Summary data for woodstove. Grouping by woodstove and including mean FEV, median FEV, IQR (interquartile range) of FEV, SD (standard deviation) of FEV, and the minimum and maximum FEV.
+new_camp %>%
+  group_by(woodstove) %>%
+summarize(new_camp, "Mean FEV"= mean(FEV),"Median FEV"= median(FEV), "IQR"=IQR(FEV), "SD"=sd(FEV), "Minimum"=min(FEV), "Maximum"=max(FEV)) %>% kable(digits=2)
+
+#Summary data for anypet. Grouping by anypet and including mean FEV, median FEV, IQR (interquartile range) of FEV, SD (standard deviation) of FEV, and the minimum and maximum FEV.
+new_camp %>%
+  group_by(anypet) %>%
+summarize(new_camp, "Mean FEV"= mean(FEV),"Median FEV"= median(FEV), "IQR"=IQR(FEV), "SD"=sd(FEV), "Minimum"=min(FEV), "Maximum"=max(FEV)) %>% kable(digits=2)
+```
+
+```{r correlation, echo=FALSE, message=FALSE}
+#Numerical correlation between FEV and white blood cells.
+select(new_camp, FEV, wbc) %>% cor() %>% kable(digits=2, caption=("Correlation of FEV and White Blood Cells"))
+```
+
+```{r woodstove to discrete, include=FALSE, message=FALSE, echo=FALSE}
+#Replacing the variables within woodstove to "Yes" when showing 1 and "No" when showing 2. 
+new_camp <- mutate(new_camp, woodstove = case_when(woodstove == 1 ~ "Yes", woodstove == 2 ~ "No"))
+```
+
+```{r anypet to discrete, include=FALSE, message=FALSE, echo=FALSE}
+##Replacing the variables within anypet to "Yes" when showing 1 and "No" when showing 2.
+new_camp <- mutate(new_camp, anypet = case_when(anypet == 1 ~ "Yes", anypet == 2 ~ "No"))
+```
+
+```{r modeling, echo=FALSE, message=FALSE, error=FALSE, fig.height=3.5, fig.width=3.5}
+#Modeling the data after exploration
+##Scatterplot of FEV and white blood cells.
+ggplot(new_camp, aes(x=wbc, y=FEV)) + geom_point() +
+  ylab("FEV (%predicted values)") + xlab("White Blood Cells (1000 cells/ul)") + labs(title="Correlation of FEV and WBC Count") + theme(plot.title = element_text(hjust = 0.5)) 
+
+##Histogram of FEV distribution.
+ggplot(new_camp, aes(x=FEV)) +  geom_histogram() + xlab("FEV (%predicted values)") + ylab("count") + labs(title="FEV Distribution") + theme(plot.title = element_text(hjust = 0.5))
+
+##Histogram of white blood cell count distribution.
+ggplot(new_camp, aes(x=wbc)) + geom_histogram() + xlab("White Blood Cells (1000 cells/ul)") + ylab("count") + labs(title="White Blood Cell Count Distribution") + theme(plot.title = element_text(hjust = 0.5))
+
+##Barplot of pet ownership counts
+ggplot(new_camp,aes(x=anypet))+ geom_bar(color="black",fill="light blue")+ theme_minimal()+ labs(title="Pet Ownership Counts",  x="Pets", y="Counts")+ geom_text(aes(label=..count..),stat='count',vjust=1.6,color="black",size=3.5) + theme(plot.title = element_text(hjust = 0.5))  
+
+##Side-by-side boxplot of FEV and pet ownership.
+ggplot(new_camp, aes(x=anypet, y=FEV)) + geom_boxplot(outlier.colour = "red") + labs(title="FEV by Pets",  x="Pets", y="FEV") + theme(plot.title = element_text(hjust = 0.5)) 
+
+##Barplot of woodstove use counts.
+ggplot(new_camp,aes(x=woodstove))+ geom_bar(color="black",fill="light blue")+ theme_minimal()+ labs(title="Woodstove Counts",  x="Woodstove", y="Counts")+ geom_text(aes(label=..count..),stat='count',vjust=1.6,color="black",size=3.5) + theme(plot.title = element_text(hjust = 0.5)) 
+
+##Side-by-side boxplot of FEV and woodstove use.
+ggplot(new_camp, aes(x=woodstove, y=FEV)) + geom_boxplot(outlier.colour = "red") +  labs(title="FEV by Woodstove",  x="Woodstove", y="FEV") + theme(plot.title = element_text(hjust = 0.5)) 
+```
+
