@@ -1,0 +1,226 @@
+---
+title: "Case Study 3"
+output:
+  html_document: default
+  pdf_document: default
+author: "Bryanda Amillano"
+---
+
+```{r setup, include=FALSE}
+#Loading relevant libraries needed for the case study.
+library(tidyverse)
+library(ggthemes)
+library(broom)
+library(knitr)
+library(haven)
+library(dplyr)
+library(ggplot2)
+```
+
+```{r load data, include=FALSE, message=FALSE, error=FALSE}
+#Loading csv data set for the case study.
+PD <- read.csv("polyps_data(1).csv")
+```
+
+```{r renaming data, include=FALSE, message=FALSE, error=FALSE}
+#Renaming variables in the polyps data set. 
+PD <- PD %>%
+  rename("polyps" = polyps , "Age" = age, "Treatment" = treat)
+```
+## Introduction
+Familial adenomatous polyposis (FAP) is a rare, hereditary condition where a person develops precancerous PD in the colon and rectum (Cleveland Clinic). Administration of the nonsteroidal anti-inflammatory drug sulindac has been followed by regression of polyps in patients with this disorder (Giardiello, et al.) This report aims to analyze the polyps data set which is based on a study of sulindac treatment to reduce the number of polyps in individuals with FAP and analyze whether or not sulindac is an effective treatment in reducing the number of polyps.
+
+## Methods
+Data analysis was conducted using R programming language version 2022.07.01. To begin analysis, necessary libraries were installed and the polyps data set was loaded. The data set was renamed to PD. Missing data only accounted for less than 1% of the data set and will not affect analysis. A statistical analysis plan was followed to report numeric summaries, visual summaries, and fit simple/multiple regression models. First, mean, median, IQR, and standard deviation summaries were run for variables polyps log count, age, and Treatment (Sulindac or Placebo). Correlation of age and polyps log count and correlation of age and polyps log count grouped by Treatment was conducted as well. For polyps log count and age, a histogram was used for visual summaries and for Treatment a bar plot was used to see counts in each treatment group. When looking at relationships between each age and polyps log count, mean, median, IQR, and standard deviation summaries were conducted and grouped by Treatment. Scatter plots were used to visualize associations between multiple explanatory and response variables. Simple linear regression models 1 and 2 (Lm 1 and 2) and multiple linear regression model 3 (Lm 3) were created to provide numeric estimates. Lm 1 estimated associations for polyps log count and Treatment and Lm 2 provided estimates for polyps log count and age. Lm 3 provided estimates for polyps log count and Age by Treatment which was visualized through a box plot. Assumptions, including linearity, independence, normal distribution, and equal variances were checked for all three models. 
+
+## Results
+The polyps data set included 200 observations and 3 variables (polyps log count, age, and treatment group which was placebo/sulindac). There were 102 people that received the placebo and 98 people that received the sulindac treatment. After running the numeric summaries for each variable and grouping them by treatment, the mean age of participants in the placebo group was around 25 years and the Sulindac group's average age was 34 years. The mean polyp log count for the placebo group was around 10 (SD 0.33). The Sulindac group had a mean polyp log count of 5 (SD 0.33). The correlation tables showed a negative correlation between polyps and age and when grouped by treatment (Placebo -0.10; sulindac -0.11). Lm3 showed a mean polyp log count decrease of 4.95 compared to the placebo group, controlling for age (95% CI -5.26, -4.64). Assumptions for the linear models were not met with the exception of age, but it was not statistically significant. 
+
+## Discussion and Conclusion
+Sulindac reduces the number and size of colorectal polyps in patients with FAP, but its effect is incomplete (Giardiello, et al.). The results based on linear regression model 3 may suggest that Sulindac treatment is effective in reducing the number of polyps in people with FAP. There is a limitation, however, because assumptions were not met for the linear models, suggesting more data would need to be collected before definitive conclusions about Sulindac can be made. 
+
+***
+
+```{r, include=FALSE, message=FALSE, error=FALSE}
+#Numeric summaries.
+##Summaries for polyps log count variable.
+PD %>% 
+  summarize(PD, "Mean polyps log count"= mean(polyps),"Median polyps log count"= median(polyps), "IQR"=IQR(polyps), "SD"=sd(polyps), "Minimum"=min(polyps), "Maximum"=max(polyps)) %>% kable(digits=2)
+
+##Summaries for Age.
+PD %>% 
+  summarize(PD, "Mean Age"= mean(Age),"Median Age"= median(Age), "IQR"=IQR(Age), "SD"=sd(Age), "Minimum"=min(Age), "Maximum"=max(Age)) %>% kable(digits=2)
+
+#Summaries for Treatment variable.
+PD %>%
+  count(Treatment) %>% kable(digits=2)
+```
+
+```{r, include=FALSE, message=FALSE, error=FALSE}
+#Visual summaries of each variable.
+##Summaries for polyps log count. 
+ggplot(PD, aes(x=polyps)) + geom_histogram() + xlab("polyps log count") + ylab("Count") + labs(title="polyps log count Distribution") + theme(plot.title = element_text(hjust = 0.5))
+
+##Summaries for Age.
+ggplot(PD, aes(x=Age)) + geom_histogram() + xlab("Age") + ylab("Count") + labs(title="Age Distribution") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r, echo=FALSE, include=FALSE, message=FALSE}
+##Summaries for Treatment group.
+ggplot(PD, aes(x = Treatment)) + 
+  geom_bar(color = "blue", fill = "light blue") + 
+  theme_minimal() + 
+  labs(title = "Treatment Distribution", x = "Treatment", y = "Counts") + 
+  geom_text(aes(label = after_stat(count)), stat = 'count', vjust = 1.6, color = "blue", size = 3.5) + 
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r correlation, echo=FALSE, error=FALSE, message=FALSE}
+#Correlation of Age and polyps log count grouped by Treatment.
+group_by(PD, Treatment) %>% summarize(cor(polyps, Age)) %>% kable(digits=2, caption = ("Correlation of Polyps log count and Age by Treatment "))
+```
+
+```{r, include=FALSE}
+#Correlation of Age and polyps log count.
+select(PD, polyps, Age) %>% cor() %>% kable(digits=2, caption=("Correlation of PD and Age"))
+```
+
+```{r, numeric summaries, echo=FALSE, error=FALSE, message=FALSE}
+PD %>% 
+  group_by(Treatment) %>%
+  summarize("Mean polyps log count"= mean(polyps),"Median polyps log count"= median(polyps), "IQR"=IQR(polyps), "SD"=sd(polyps)) %>% kable(digits=2, caption = ("Mean Polyps (log count) by Treatment Group"))
+
+PD %>% 
+  group_by(Treatment) %>%
+  summarize("Mean Age"= mean(Age),"Median Age"= median(Age), "IQR"=IQR(Age), "SD"=sd(Age), "Minimum"=min(Age)) %>% kable(digits=2, caption = ("Mean Age by Treatment Group"))  
+```
+
+```{r, echo=FALSE, error=FALSE, message=FALSE, fig.height=3.5, fig.width=3}
+##Summaries for Treatment group.
+ggplot(PD, aes(x = Treatment)) + 
+  geom_bar(color = "blue", fill = "light blue") + 
+  theme_minimal() + 
+  labs(title = "Treatment Distribution", x = "Treatment", y = "Counts") + 
+  geom_text(aes(label = after_stat(count)), stat = 'count', vjust = 1.6, color = "blue", size = 3.5) + 
+  theme(plot.title = element_text(hjust = 0.5))
+
+#Visual summaries of the relationship between each explanatory variable and response variable.
+##Treatment group vs. polyps log count
+ggplot(PD, aes(x=Treatment, y=polyps)) + geom_boxplot(outlier.colour = "magenta") + labs(title="Polyps log count by Treatment",  x="Treatment", y="Polyps log count") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r, include=FALSE}
+#Visual summaries of the relationship between each explanatory variable and response variable. 
+##Age vs. Polyps log count
+ggplot(PD, aes(x=Age, y=polyps)) + geom_point() + ylab("Polyps log count") + xlab("Age") + labs(title="Correlation of Age and Polyps log count") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+```{r, single linear models, include=FALSE}
+#Fitting two simple regression models to estimate association.
+lm1 <- with(PD, lm(polyps ~ Treatment))
+lm1 %>% tidy(conf.int= T) %>% kable(digits = 2, caption = ("Linear Model 1"))
+
+lm2 <- with(PD, lm(polyps ~ Age))
+lm2 %>% tidy(conf.int= T) %>% kable(digits = 2, caption = ("Linear Model 2"))
+```
+
+```{r, scatterplots, include=FALSE}
+#Scatter plot of linear model 1 to view associations.
+ggplot(PD, aes(x=Treatment, y=polyps)) + geom_point() + geom_smooth(method = "lm", color = "magenta")
+
+#Scatter plot of linear model 2 to view associations.
+ggplot(PD, aes(x=Age, y=polyps)) + geom_point() + geom_smooth(method = "lm", color = "magenta")
+```
+
+
+```{r, assumptions for model 1, include=FALSE}
+#Checking assumptions for simple linear model 1.
+#Fitting model and obtaining residuals.
+lm1 <- with (PD, lm(polyps ~ Treatment))
+PD_resid1 <- mutate(PD, resid=lm1$resid)
+
+##Checking linearity for linear model 1 Treatment and Polyps log count.
+###Checking linearity for assault and murder.
+ggplot(PD, aes(x=Treatment, y=polyps)) + geom_point() + geom_smooth(method = "lm", color = "magenta")
+
+##Checking independence would involve reviewing data collection with your collaborator.
+
+##Checking normality assumptions.
+ggplot(PD_resid1, aes(x = lm1$resid)) + geom_histogram() + xlab("Residuals")
+
+##Checking for equal variance assumptions.
+###Checking equal variances for Treatment.
+ggplot(PD_resid1, aes(x = Treatment, y = lm1$resid)) + geom_point() + geom_hline(yintercept = 0) + xlab("Treatment") + ylab("Residuals")
+###Checking equal variances for polyps log count.
+ggplot(PD_resid1, aes(x = polyps, y = lm1$resid)) + geom_point() + geom_hline(yintercept = 0) + xlab("polyps") + ylab("Residuals")
+```
+
+```{r, assumptions for model 2, include=FALSE}
+#Checking assumptions for simple linear model 2.
+#Fitting model and obtaining residuals.
+lm2 <- with (PD, lm(polyps ~ Age))
+PD_resid2 <- mutate(PD, resid=lm2$resid)
+
+##Checking linearity for linear model 2 Treatment and Age.
+###Checking linearity for assault and murder.
+ggplot(PD, aes(x=Age, y=polyps)) + geom_point() + geom_smooth(method = "lm", color = "magenta")
+
+##Checking independence would involve reviewing data collection with your collaborator.
+
+##Checking normality assumptions.
+ggplot(PD_resid2, aes(x = lm2$resid)) + geom_histogram() + xlab("Residuals")
+
+##Checking for equal variance assumptions.
+###Checking equal variances for Treatment.
+ggplot(PD_resid1, aes(x = Treatment, y = lm2$resid)) + geom_point() + geom_hline(yintercept = 0) + xlab("Treatment") + ylab("Residuals")
+###Checking equal variances for Age.
+ggplot(PD_resid2, aes(x = Age, y = lm2$resid)) + geom_point() + geom_hline(yintercept = 0) + xlab("polyps") + ylab("Residuals")
+```
+
+*** 
+
+```{r, echo=FALSE, error=FALSE, message=FALSE}
+#Fitting one multiple regression model to estimate association.
+lm3 <- with(PD, lm(polyps ~ Treatment * Age))
+lm3 %>% tidy(conf.int= T) %>% kable(digits = 2, caption = ("Linear Model 3 (Polyps Log Count, Treatment, and Age)"))
+```
+
+```{r, assumptions for model 3, include=FALSE}
+#Checking assumptions for multiple regression model 3.
+#Fitting model and obtaining residuals.
+lm3 <- with(PD, lm(polyps ~ Treatment * Age)) 
+PD_resid3 <- mutate(PD, resid=lm3$resid)
+
+##Checking linearity for linear model 3. 
+###Checking linearity for polyps log count and Age.
+ggplot(PD, aes(x=Age, y=polyps)) + geom_point() + geom_smooth(method = "lm", color = "magenta")
+###Checking linearity for Treatment and polyps log count.
+ggplot(PD, aes(x= Treatment, y= polyps)) + geom_point() + geom_smooth(method = "lm", color = "magenta")
+###Checking linearity for Age and Treatment.
+ggplot(PD, aes(x=Age, y=Treatment)) + geom_point() + geom_smooth(method="lm", color = "magenta")
+
+##Checking independence would involve reviewing data collection with your collaborator.
+
+##Checking normality assumptions. 
+ggplot(PD_resid3, aes(x = lm3$resid)) + geom_histogram() + xlab("Residuals")
+
+##Checking for equal variance assumptions.
+###Checking equal variances for Treatment.
+ggplot(PD_resid3, aes(x = Treatment, y = lm3$resid)) + geom_point() + geom_hline(yintercept = 0) + xlab("Treatment") + ylab("Residuals")
+###Checking equal variances for Age.
+ggplot(PD_resid3, aes(x = Age, y = lm3$resid)) + geom_point() + geom_hline(yintercept = 0) + xlab("Age") + ylab("Residuals")
+###Checking equal variances for Polyps log count.
+ggplot(PD_resid3, aes(x = polyps , y = lm3$resid)) + geom_point() + geom_hline(yintercept = 0) + xlab("polyps log count") + ylab("Residuals")
+```
+
+```{r, echo=FALSE, error=FALSE, message=FALSE, fig.height=4}
+#Scatter plot of multiple regression model 3.
+ggplot(PD, aes(x = Age, y = polyps, color = Treatment)) + geom_point() + geom_smooth(method = "lm", se = FALSE) + xlab("Age") + ylab("Polyps log count") + labs(title = "Relationship between Age, Polyps log count, and Treatment") + theme(plot.title = element_text(hjust = 0.5))
+```
+
+***
+
+# References
+*Cleveland Clinic. (n.d). Familial Adenomatous Polyposis (FAP). Retrieved from https://myclevelandclinic.org/health/diseases/16993-familial-adenomatous-polyposis-fap*
+
+*Giardiello FM, Hamilton SR, Krush AJ, Piantadosi S, Hylind LM, Celano P, Booker SV, Robinson CR, Offerhaus GJ. Treatment of colonic and rectal adenomas with sulindac in familial adenomatous polyposis. N Engl J Med. 1993 May 6;328(18):1313-6. doi: 10.1056/NEJM199305063281805. PMID: 8385741.*
